@@ -4,5 +4,7 @@ title = "Emre'nin Blogu"
 enableRobotsTXT = true
 pagination.pagerSize = 10
 
+theme = "hugo-theme-terminal"
+
 [params]
   author = "Emre"
