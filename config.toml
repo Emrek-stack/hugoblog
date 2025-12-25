@@ -1,0 +1,8 @@
+baseURL = "http://example.org/"
+languageCode = "tr-TR"
+title = "Emre'nin Blogu"
+enableRobotsTXT = true
+paginate = 10
+
+[params]
+  author = "Emre"

@@ -1,0 +1,13 @@
+{{ define "main" }}
+<section class="posts">
+  {{ range .Pages }}
+    <article>
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <p>{{ .Summary }}</p>
+    </article>
+  {{ else }}
+    <p>Gönderi bulunamadı.</p>
+  {{ end }}
+</section>
+{{ end }}
+{{ template "_default/baseof.html" . }}
