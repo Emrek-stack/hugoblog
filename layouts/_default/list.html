@@ -1,13 +1,14 @@
 {{ define "main" }}
 <section class="posts">
+  <h2>{{ .Title }}</h2>
   {{ $paginator := .Paginate .Pages }}
   {{ range $paginator.Pages }}
     <article>
-      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
       <p>{{ .Summary }}</p>
     </article>
   {{ else }}
-    <p>Gönderi bulunamadı.</p>
+    <p>Gönderi yok.</p>
   {{ end }}
 
   {{ if gt $paginator.TotalPages 1 }}
