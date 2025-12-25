@@ -1,4 +1,4 @@
-baseURL = "http://example.org/"
+baseURL = "https://emrekarahan.com.tr/"
 languageCode = "tr-TR"
 title = "Emre'nin Blogu"
 enableRobotsTXT = true
@@ -6,5 +6,12 @@ pagination.pagerSize = 10
 
 theme = "hugo-theme-terminal"
 
+[markup.goldmark.renderer]
+  unsafe = true
+
 [params]
   author = "Emre"
+  contentTypeName = "posts"
+  showMenuItems = 2
+  fullWidthTheme = false
+  centerTheme = false
