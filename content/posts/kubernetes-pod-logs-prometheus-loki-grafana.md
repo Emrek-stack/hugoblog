@@ -3,6 +3,8 @@ title: "Kubernetes Pod Log'larını Prometheus / Loki / Grafana Ortamına Gönde
 date: 2025-12-25T20:00:00+03:00
 tags: [kubernetes, logging, loki, grafana, prometheus]
 draft: false
+excerpt: "Kubernetes pod log'larını Promtail ile Loki'ye, metrikleri Prometheus'a nasıl gönderip Grafana ile nasıl görselleştireceğinizi adım adım anlatıyorum."
+featured_image: "/images/architecture.png"
 ---
 
 Bu yazıda Kubernetes'de çalışan pod'ların log'larının nasıl toplanıp, Loki'ye gönderilip Grafana ile incelendiğini ve Prometheus ile metrik entegrasyonunu adım adım gösteriyorum. Hem mimariyi hem de gerekli komut/YAML parçalarını içerir.
@@ -123,6 +125,25 @@ Promtail, kendi metriklerini `http_listen_port` üzerinden açar (ör. :9080). P
 
 Eğer Prometheus Operator kullanıyorsanız `ServiceMonitor` tanımı ile Promtail servislerini izletebilirsiniz.
 
+Örnek `ServiceMonitor` (Prometheus Operator kullanıyorsanız):
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: promtail-monitor
+  namespace: observability
+spec:
+  selector:
+    matchLabels:
+      app: promtail
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      interval: 30s
+
+```
+
 4) Grafana'da Loki datasource ekleme
 
 Grafana UI → Configuration → Data sources → Add Loki
@@ -148,6 +169,39 @@ Grafana panellerinde bir panel'i metrik (Prometheus) veya log (Loki) sorgusuyla 
 - Retention: Loki için uygun retention ve indexten saklama ayarları yapın (bol disk/logrotate gerekebilir).
 - Güvenlik: Loki/Grafana endpointlerini uygun şekilde doğrulayın, TLS ve auth kullanın.
 - Etiketleme: Promtail ile doğru label'ları (namespace, pod, app) ekleyin; sorgular bu etiketlerle çok daha hızlı çalışır.
+
+Helm values örneği (basit) — Promtail için `values.yaml` içinde Loki url ve ekstra job etiketi örneği:
+
+```yaml
+promtail:
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name: kubernetes-pods
+        relabel_configs:
+          - action: replace
+            source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+# Loki values (örnek retention/settings)
+loki:
+  persistence:
+    enabled: true
+    size: 10Gi
+  schema_config:
+    configs:
+      - from: 2020-10-15
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+```
 
 Kaynaklar
 - Loki: https://grafana.com/oss/loki
