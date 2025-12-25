@@ -50,9 +50,27 @@ git remote add origin git@github.com:YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
+
 3) Workflow otomatik olarak `main`'e her push yaptığınızda çalışacak, Hugo'yu derleyip `gh-pages` dalına deploy edecektir. GitHub Pages ayarlarında (Settings → Pages) kaynağı `gh-pages` branch olarak seçin.
 
+Özel domain (emrekarahan.com.tr) kurulum adımları:
+
+- (A) Bu repo köküne `static/CNAME` dosyası eklendi; Hugo derlemesi `public/CNAME` oluşturacak ve workflow bu dosyayla birlikte `gh-pages`'e deploy edecektir.
+- (B) DNS sağlayıcınızdan domain için aşağıdaki kayıtları ekleyin:
+
+	- Apex (emrekarahan.com.tr) için 4 adet A kaydı:
+
+		- 185.199.108.153
+		- 185.199.109.153
+		- 185.199.110.153
+		- 185.199.111.153
+
+	- (Opsiyonel) `www` alt alanı kullanacaksanız `www` için bir CNAME kaydı oluşturun ve hedef olarak `Emrek-stack.github.io` girin.
+
+- (C) DNS değişiklikleri yayınlandıktan sonra GitHub → repository → Settings → Pages bölümüne gidip Custom domain olarak `emrekarahan.com.tr` girin; GitHub otomatik olarak `CNAME` dosyasını algılar.
+
 Notlar:
-- Workflow, `GITHUB_TOKEN` kullanır; ekstra secret gerekmez.
-- Özel domain kullanacaksanız bir `CNAME` dosyası ekleyin ve Pages ayarlarından domain'i ekleyin.
+- DNS değişikliklerinin tüm dünyada yayılması (propagation)  minutes ile 48 saat arasında sürebilir.
+- Eğer Cloudflare gibi proxy (orange cloud) kullanıyorsanız önce proxy'yi devre dışı bırakıp direkt A/CNAME ile doğrulamayı tamamlayın.
+
 
